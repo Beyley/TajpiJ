@@ -13,17 +13,22 @@ public class App {
     public static boolean isEnabled;
     public static JCheckBox enabledCheckBox;
 
+    public static InputHandler input;
+
     public static void main(String[] args) {
-        // Creating the Frame
+        // #region CREATE FRAME
         JFrame mainFrame = new JFrame("TajpiJ");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setSize(400, 550);
+        // #endregion
 
+        // #region TOP PANEL
         JPanel topPanel = new JPanel();
         JLabel testInputHereLabel = new JLabel("Test input here!");
         topPanel.add(testInputHereLabel);
+        // #endregion
 
-        // Creating the panel at bottom and adding components
+        // #region BOTTOM PANEL
         JPanel southPanel = new JPanel();
         enabledCheckBox = new JCheckBox("Enabled", true);
         enabledCheckBox.addItemListener(new ItemListener() {
@@ -32,17 +37,21 @@ public class App {
             }
         });
         southPanel.add(enabledCheckBox);
+        // #endregion
 
-        // Text Area at the Center
+        // #region MIDDLE PANEL
         JTextArea textArea = new JTextArea();
+        // #endregion
 
-        // Adding Components to the frame.
+        // #region ADD COMPONENTS TO FRAME
         mainFrame.getContentPane().add(BorderLayout.NORTH, topPanel);
         mainFrame.getContentPane().add(BorderLayout.CENTER, textArea);
         mainFrame.getContentPane().add(BorderLayout.SOUTH, southPanel);
         mainFrame.setVisible(true);
         mainFrame.setResizable(false);
+        // #endregion
 
+        // #region REGISTER INPUT HANDLER
         Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
         logger.setLevel(Level.OFF);
         logger.setUseParentHandlers(false);
@@ -56,6 +65,8 @@ public class App {
             System.exit(1);
         }
 
-        GlobalScreen.addNativeKeyListener(new InputHandler());
+        input = new InputHandler();
+        GlobalScreen.addNativeKeyListener(input);
+        // #endregion
     }
 }
