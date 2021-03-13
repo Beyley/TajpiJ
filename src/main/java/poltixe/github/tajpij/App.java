@@ -17,14 +17,57 @@ import com.github.kwhat.jnativehook.NativeHookException;
 import org.apache.commons.io.FileUtils;
 
 public class App {
-    public static boolean isEnabled;
     public static JCheckBox enabledCheckBox;
 
     public static InputHandler input;
 
     public static Config config;
 
+    public static void writeConfig() {
+        try {
+            File f = new File("tajpijconfig.json");
+
+            if (!f.exists()) {
+                config = new Config();
+            } else if (config == null) {
+                readConfig();
+            }
+
+            if (!f.isDirectory()) {
+                ObjectMapper objectMapper = new ObjectMapper();
+
+                f.delete();
+                f.createNewFile();
+
+                FileWriter fileWriter = new FileWriter("tajpijconfig.json");
+                fileWriter.write(objectMapper.writeValueAsString(config));
+                fileWriter.close();
+            }
+        } catch (IOException e) {
+
+        }
+    }
+
+    public static void readConfig() {
+        try {
+            File f = new File("tajpijconfig.json");
+
+            ObjectMapper mapper = new ObjectMapper();
+
+            String json = FileUtils.readFileToString(f, "utf-8");
+
+            config = mapper.readValue(json, Config.class);
+        } catch (IOException e) {
+
+        }
+    }
+
     public static void main(String[] args) throws JsonProcessingException {
+        // #region CONFIG HANDLER
+        writeConfig();
+        readConfig();
+        // #endregion
+
         // #region CREATE FRAME
         JFrame mainFrame = new JFrame("TajpiJ");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -39,10 +82,11 @@ public class App {
 
         // #region BOTTOM PANEL
         JPanel southPanel = new JPanel();
-        enabledCheckBox = new JCheckBox("Enabled", true);
+        enabledCheckBox = new JCheckBox("Enabled", config.getEnabledOnStartup() == 1);
         enabledCheckBox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-                isEnabled = e.getStateChange() == 1;
+                config.setEnabledOnStartup(e.getStateChange() == 1 ? 1 : 0);
+                writeConfig();
             }
         });
         southPanel.add(enabledCheckBox);
@@ -78,28 +122,5 @@ public class App {
         GlobalScreen.addNativeKeyListener(input);
         // #endregion
 
-        // #region CONFIG HANDLER
-        try {
-            File f = new File("tajpijconfig.json");
-            if (!f.exists() && !f.isDirectory()) {
-                config = new Config();
-                ObjectMapper objectMapper = new ObjectMapper();
-
-                f.createNewFile();
-
-                FileWriter fileWriter = new FileWriter("tajpijconfig.json");
-                fileWriter.write(objectMapper.writeValueAsString(config));
-                fileWriter.close();
-            }
-
-            ObjectMapper mapper = new ObjectMapper();
-
-            String json = FileUtils.readFileToString(f, "utf-8");
-
-            config = mapper.readValue(json, Config.class);
-        } catch (IOException e) {
-
-        }
-        // #endregion
     }
 }
