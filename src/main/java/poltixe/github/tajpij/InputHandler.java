@@ -5,7 +5,6 @@ import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
 
 import java.awt.AWTException;
 import java.awt.Robot;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
 import java.awt.datatransfer.StringSelection;
@@ -18,6 +17,11 @@ public class InputHandler implements NativeKeyListener {
 
     Robot robot;
 
+    boolean shiftHeld = false;
+
+    final static char[][] convertTable = { { 's', 'ŝ' }, { 'c', 'ĉ' }, { 'g', 'ĝ' }, { 'h', 'ĥ' }, { 'j', 'ĵ' },
+            { 'u', 'ŭ' }, };
+
     public InputHandler() {
         try {
             this.robot = new Robot();
@@ -27,9 +31,13 @@ public class InputHandler implements NativeKeyListener {
     }
 
     public void nativeKeyPressed(NativeKeyEvent e) {
+        if (NativeKeyEvent.getKeyText(e.getKeyCode()) == "Shift")
+            shiftHeld = true;
     }
 
     public void nativeKeyReleased(NativeKeyEvent e) {
+        if (NativeKeyEvent.getKeyText(e.getKeyCode()) == "Shift")
+            shiftHeld = false;
     }
 
     public void nativeKeyTyped(NativeKeyEvent e) {
@@ -39,32 +47,13 @@ public class InputHandler implements NativeKeyListener {
         char thisKey = e.getKeyChar();
 
         try {
-            if (thisKey == this.keyToLookFor) {
-                switch (this.lastKey) {
-                case 's':
-                    pressBackspace(2);
-                    typeLetter("ŝ");
-                    break;
-                case 'c':
-                    pressBackspace(2);
-                    typeLetter("ĉ");
-                    break;
-                case 'g':
-                    pressBackspace(2);
-                    typeLetter("ĝ");
-                    break;
-                case 'h':
-                    pressBackspace(2);
-                    typeLetter("ĥ");
-                    break;
-                case 'j':
-                    pressBackspace(2);
-                    typeLetter("ĵ");
-                    break;
-                case 'u':
-                    pressBackspace(2);
-                    typeLetter("ŭ");
-                    break;
+            if (thisKey == this.keyToLookFor || thisKey == Character.toUpperCase(this.keyToLookFor)) {
+                for (char[] charToCheck : convertTable) {
+                    if (charToCheck[0] == Character.toLowerCase(lastKey)) {
+                        pressBackspace(2);
+                        typeLetter(Character.isUpperCase(lastKey) ? String.valueOf(charToCheck[1]).toUpperCase()
+                                : String.valueOf(charToCheck[1]));
+                    }
                 }
             }
         } catch (Exception ex) {
@@ -85,10 +74,15 @@ public class InputHandler implements NativeKeyListener {
         // Copy it to clipboard
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(selection, null);
+
         // Paste it
         robot.keyPress(KeyEvent.VK_CONTROL);
+        if (shiftHeld)
+            robot.keyRelease(KeyEvent.VK_SHIFT);
         robot.keyPress(KeyEvent.VK_V);
         robot.keyRelease(KeyEvent.VK_V);
+        if (shiftHeld)
+            robot.keyPress(KeyEvent.VK_SHIFT);
         robot.keyRelease(KeyEvent.VK_CONTROL);
     }
 }

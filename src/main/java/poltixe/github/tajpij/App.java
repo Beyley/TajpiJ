@@ -121,6 +121,5 @@ public class App {
         input = new InputHandler();
         GlobalScreen.addNativeKeyListener(input);
         // #endregion
-
     }
 }
