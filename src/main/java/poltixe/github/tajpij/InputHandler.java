@@ -33,6 +33,9 @@ public class InputHandler implements NativeKeyListener {
     }
 
     public void nativeKeyTyped(NativeKeyEvent e) {
+        if (App.config.getEnabledOnStartup() == 0)
+            return;
+
         char thisKey = e.getKeyChar();
 
         try {

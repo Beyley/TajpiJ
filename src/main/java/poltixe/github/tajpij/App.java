@@ -3,11 +3,18 @@ package poltixe.github.tajpij;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
+import java.nio.CharBuffer;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.kwhat.jnativehook.GlobalScreen;
 import com.github.kwhat.jnativehook.NativeHookException;
+
+import org.apache.commons.io.FileUtils;
 
 public class App {
     public static boolean isEnabled;
@@ -15,7 +22,9 @@ public class App {
 
     public static InputHandler input;
 
-    public static void main(String[] args) {
+    public static Config config;
+
+    public static void main(String[] args) throws JsonProcessingException {
         // #region CREATE FRAME
         JFrame mainFrame = new JFrame("TajpiJ");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -67,6 +76,30 @@ public class App {
 
         input = new InputHandler();
         GlobalScreen.addNativeKeyListener(input);
+        // #endregion
+
+        // #region CONFIG HANDLER
+        try {
+            File f = new File("tajpijconfig.json");
+            if (!f.exists() && !f.isDirectory()) {
+                config = new Config();
+                ObjectMapper objectMapper = new ObjectMapper();
+
+                f.createNewFile();
+
+                FileWriter fileWriter = new FileWriter("tajpijconfig.json");
+                fileWriter.write(objectMapper.writeValueAsString(config));
+                fileWriter.close();
+            }
+
+            ObjectMapper mapper = new ObjectMapper();
+
+            String json = FileUtils.readFileToString(f, "utf-8");
+
+            config = mapper.readValue(json, Config.class);
+        } catch (IOException e) {
+
+        }
         // #endregion
     }
 }
