@@ -45,6 +45,7 @@ public class InputHandler implements NativeKeyListener {
             return;
 
         char thisKey = e.getKeyChar();
+        System.out.println(lastKey + "" + thisKey);
 
         try {
             if (thisKey == this.keyToLookFor || thisKey == Character.toUpperCase(this.keyToLookFor)) {

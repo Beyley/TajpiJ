@@ -101,6 +101,7 @@ public class App {
 
         // #region MIDDLE PANEL
         JTextArea textArea = new JTextArea();
+        textArea.setLineWrap(true);
         // #endregion
 
         // #region ADD COMPONENTS TO FRAME
