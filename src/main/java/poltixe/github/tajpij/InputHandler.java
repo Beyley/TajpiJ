@@ -1,7 +1,7 @@
 package poltixe.github.tajpij;
 
-import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
-import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
+import org.jnativehook.keyboard.NativeKeyEvent;
+import org.jnativehook.keyboard.NativeKeyListener;
 
 import java.awt.AWTException;
 import java.awt.Robot;
@@ -50,7 +50,7 @@ public class InputHandler implements NativeKeyListener {
             if (thisKey == this.keyToLookFor || thisKey == Character.toUpperCase(this.keyToLookFor)) {
                 for (char[] charToCheck : convertTable) {
                     if (charToCheck[0] == Character.toLowerCase(lastKey)) {
-                        pressBackspace(2);
+                        // pressBackspace(2);
                         typeLetter(Character.isUpperCase(lastKey) ? String.valueOf(charToCheck[1]).toUpperCase()
                                 : String.valueOf(charToCheck[1]));
                     }
@@ -77,12 +77,16 @@ public class InputHandler implements NativeKeyListener {
 
         // Paste it
         robot.keyPress(KeyEvent.VK_CONTROL);
+
         if (shiftHeld)
             robot.keyRelease(KeyEvent.VK_SHIFT);
+
         robot.keyPress(KeyEvent.VK_V);
         robot.keyRelease(KeyEvent.VK_V);
+
         if (shiftHeld)
             robot.keyPress(KeyEvent.VK_SHIFT);
+
         robot.keyRelease(KeyEvent.VK_CONTROL);
     }
 }
