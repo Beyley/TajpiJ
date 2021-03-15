@@ -30,9 +30,11 @@ public class App {
 
     public static Config config;
 
+    public static final String configFile = "tajpijconfig.json";
+
     public static void writeConfig() {
         try {
-            File f = new File("tajpijconfig.json");
+            File f = new File(configFile);
 
             if (!f.exists()) {
                 config = new Config();
@@ -46,7 +48,7 @@ public class App {
                 f.delete();
                 f.createNewFile();
 
-                FileWriter fileWriter = new FileWriter("tajpijconfig.json");
+                FileWriter fileWriter = new FileWriter(configFile);
                 fileWriter.write(objectMapper.writeValueAsString(config));
                 fileWriter.close();
             }
@@ -57,7 +59,7 @@ public class App {
 
     public static void readConfig() {
         try {
-            File f = new File("tajpijconfig.json");
+            File f = new File(configFile);
 
             ObjectMapper mapper = new ObjectMapper();
 
