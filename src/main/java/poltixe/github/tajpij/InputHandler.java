@@ -18,6 +18,7 @@ public class InputHandler implements NativeKeyListener {
     Robot robot;
 
     boolean shiftHeld = false;
+    boolean ctrlHeld = false;
 
     final static char[][] convertTable = { { 's', 'ŝ' }, { 'c', 'ĉ' }, { 'g', 'ĝ' }, { 'h', 'ĥ' }, { 'j', 'ĵ' },
             { 'u', 'ŭ' }, };
@@ -31,13 +32,31 @@ public class InputHandler implements NativeKeyListener {
     }
 
     public void nativeKeyPressed(NativeKeyEvent e) {
-        if (NativeKeyEvent.getKeyText(e.getKeyCode()) == "Shift")
+        switch (NativeKeyEvent.getKeyText(e.getKeyCode())) {
+        case "Shift":
             shiftHeld = true;
+            break;
+        case "Ctrl":
+            ctrlHeld = true;
+            break;
+        case "Space":
+            if (ctrlHeld) {
+                App.enabledCheckBox.setSelected(!App.enabledCheckBox.isSelected());
+            }
+            break;
+        }
+
     }
 
     public void nativeKeyReleased(NativeKeyEvent e) {
-        if (NativeKeyEvent.getKeyText(e.getKeyCode()) == "Shift")
+        switch (NativeKeyEvent.getKeyText(e.getKeyCode())) {
+        case "Shift":
             shiftHeld = false;
+            break;
+        case "Ctrl":
+            ctrlHeld = false;
+            break;
+        }
     }
 
     public void nativeKeyTyped(NativeKeyEvent e) {
@@ -45,13 +64,13 @@ public class InputHandler implements NativeKeyListener {
             return;
 
         char thisKey = e.getKeyChar();
-        System.out.println(lastKey + "" + thisKey);
+        // System.out.println(lastKey + "" + thisKey);
 
         try {
             if (thisKey == this.keyToLookFor || thisKey == Character.toUpperCase(this.keyToLookFor)) {
                 for (char[] charToCheck : convertTable) {
                     if (charToCheck[0] == Character.toLowerCase(lastKey)) {
-                        // pressBackspace(2);
+                        pressBackspace(2);
                         typeLetter(Character.isUpperCase(lastKey) ? String.valueOf(charToCheck[1]).toUpperCase()
                                 : String.valueOf(charToCheck[1]));
                     }
